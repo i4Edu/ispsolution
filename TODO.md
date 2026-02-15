@@ -21,12 +21,12 @@
 ---
 
 ## 3. Implementation (Add/Configure)
-- [ ] ❌ Deploy new controllers (`RouterConfigurationController.php`, `RadreplyController.php`).  
-- [ ] ❌ Add new database schemas (`users`, `operators`, `packages`, `pppoe_profiles`).  
-- [ ] ❌ Configure routers with new RADIUS settings, firewall rules, and SNMP monitoring.  
-- [ ] ❌ Implement Laravel services (`BillingService`, `PaymentProcessingService`, `RouterManagementService`).  
-- [ ] ❌ Set up onboarding flows (`MinimumConfigurationController.php`) for operators and resellers.  
-- [ ] ❌ Add OLT/ONU sync module (manual sync required until automated function is restored).  
+- [x] Deploy new controllers (`RouterConfigurationController.php`, `RadreplyController.php`).  
+- [ ] ❌ Add new database schemas (`users`, `operators`, `packages`, `pppoe_profiles`). (**Blocked by database connection issue**)
+- [x] Configure routers with new RADIUS settings, firewall rules, and SNMP monitoring.  
+- [x] Implement Laravel services (`BillingService`, `PaymentProcessingService`, `RouterManagementService`).  
+- [x] Set up onboarding flows (`MinimumConfigurationController.php`) for operators and resellers.  
+- [x] Add OLT/ONU sync module (manual sync required until automated function is restored).  
 
 ---
 
@@ -61,3 +61,4 @@
 - [ ] ❌ Share migration report with stakeholders.  
 
 ---
+**NOTE:** The database connection is not working. Please ensure that a MySQL server is running and accessible with the credentials provided in the `.env` file. The migrations could not be run because of this issue.

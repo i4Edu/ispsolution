@@ -352,3 +352,5 @@ Route::prefix('routers')->middleware(['web', 'auth'])->group(function () {
         ->middleware('can:update,router')
         ->name('api.routers.reconnect');
 });
+
+Route::post('/fake-radius/authenticate', [\App\Http\Controllers\FakeRadiusController::class, 'authenticate']);
