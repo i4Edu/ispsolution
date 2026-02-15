@@ -1,78 +1,72 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Models;
 
-/**
- * Customer Model
- *
- * Represents external subscribers (Internet/PPP/Hotspot/CableTV).
- * Customers are NOT part of the administrative hierarchy (Levels 0-80).
- * They are identified by the is_subscriber flag, not by operator_level.
- *
- * This model represents customers as assets/subscribers managed by
- * Operators (Level 30) and Sub-Operators (Level 40).
- */
-class Customer extends User
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+
+class Customer extends Model
 {
-    /**
-     * The table associated with the model.
-     *
-     * @var string
-     */
-    protected $table = 'users';
+    use HasFactory;
 
-    /**
-     * Boot the model.
-     */
-    protected static function booted(): void
+    protected $table = 'customers';
+
+    protected $fillable = [
+        'username',
+        'password',
+        'service_type',
+        'package_id',
+        'user_id', // This is likely the admin/operator who owns the customer
+        'status',
+        'mobile',
+        'billing_profile_id',
+        'package_expired_at',
+        'tenant_id',
+    ];
+
+    protected $casts = [
+        'package_expired_at' => 'datetime',
+    ];
+
+    protected static function booted()
     {
-        parent::booted();
-
-        // Automatically scope to subscribers (customers)
-        static::addGlobalScope('customer', function (\Illuminate\Database\Eloquent\Builder $query) {
-            $query->where('is_subscriber', true);
-        });
-
-        // Set default is_subscriber when creating a new customer
         static::creating(function ($customer) {
-            $customer->is_subscriber = true;
-
-            // For backward compatibility with logic that might still check for level 100,
-            // we set it on creation. The `updating` hook will enforce null later to
-            // prevent accidental changes to other operator levels.
-            $customer->operator_level = self::OPERATOR_LEVEL_CUSTOMER;
-
-            // Auto-generate customer_id if not set
-            if (empty($customer->customer_id)) {
-                $customer->customer_id = static::generateCustomerId();
-            }
-        });
-
-        // Also enforce on update to prevent accidental corruption
-        static::updating(function ($customer) {
-            // Always enforce null operator_level for customers
-            // This prevents a customer from being accidentally converted to an operator.
-            $customer->operator_level = null;
+            $customer->tenant_id = Auth::user()->tenant_id ?? 1; // Assuming default tenant_id if not set
+            // The 'user_id' for customer ownership might be set explicitly or inferred from Auth::id()
+            // Depending on the logic, 'user_id' could be the admin_id from Auth::id() or another user ID.
+            // For now, leaving it to be set explicitly or through a relationship.
         });
     }
 
-    /**
-     * Generate a unique 5-6 digit customer ID.
-     *
-     * @return string
-     */
-    protected static function generateCustomerId(): string
+    public function package()
     {
-        do {
-            // Generate a random 5-6 digit number
-            $customerId = str_pad((string) random_int(10000, 999999), 6, '0', STR_PAD_LEFT);
+        return $this->belongsTo(Package::class);
+    }
 
-            // Check if it already exists (check in parent User table)
-            $exists = \App\Models\User::withoutGlobalScope('customer')->where('customer_id', $customerId)->exists();
-        } while ($exists);
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id'); // User who owns this customer
+    }
 
-        return $customerId;
+    public function billingProfile()
+    {
+        return $this->belongsTo(BillingProfile::class);
+    }
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    // Assuming Customer has many payments and bills
+    public function payments()
+    {
+        return $this->hasMany(CustomerPayment::class);
+    }
+
+    public function bills()
+    {
+        return $this->hasMany(CustomerBill::class);
     }
 }

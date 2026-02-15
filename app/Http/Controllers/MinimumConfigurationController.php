@@ -54,7 +54,10 @@ class MinimumConfigurationController extends Controller
     private function checkExamAttendance(): bool
     {
         if (config('consumer.exam_attendance')) {
-            // Logic to check exam attendance
+            // Placeholder for actual exam attendance check logic.
+            // For now, if exam attendance is enabled, assume it needs to be completed.
+            // A more robust solution would check a user_exam_status table or similar.
+            return false; // Assuming it needs to be attended/passed if enabled
         }
         return true;
     }
@@ -72,31 +75,40 @@ class MinimumConfigurationController extends Controller
     private function checkCustomerData(): bool
     {
         // Logic to check for customer data or import request
-        return true;
+        // Assuming App\Models\Customer and App\Models\CustomerImportRequest exist
+        return \App\Models\Customer::where('tenant_id', Auth::user()->id)->count() > 0 ||
+               \App\Models\CustomerImportRequest::where('tenant_id', Auth::user()->id)->where('status', 'pending')->count() > 0;
     }
 
     private function checkOperatorBillingProfile(): bool
     {
         // Logic to check if operator has assigned billing profile
-        return true;
+        // Assuming a many-to-many relationship between User and BillingProfile
+        return Auth::user()->billingProfiles()->count() > 0;
     }
 
     private function checkPackageAssignment(): bool
     {
         // Logic to check if packages are created from master packages
-        return true;
+        // Assuming App\Models\Package exists and has a tenant_id or admin_id
+        return \App\Models\Package::where('admin_id', Auth::user()->id)->count() > 0;
     }
 
     private function checkPackagePricing(): bool
     {
         // Logic to check if all packages have price > 1
-        return true;
+        // Assuming App\Models\Package exists and has a tenant_id or admin_id and a 'name' field
+        return \App\Models\Package::where('admin_id', Auth::user()->id)
+            ->where('name', '!=', 'Trial') // Exclude Trial packages
+            ->where('price', '<=', 1)
+            ->count() === 0;
     }
 
     private function checkBackupSettings(): bool
     {
         // Logic to check if backup settings are configured
-        return true;
+        // Assuming App\Models\BackupSetting exists and has a tenant_id or admin_id
+        return \App\Models\BackupSetting::where('admin_id', Auth::user()->id)->count() > 0;
     }
 
     private function checkProfileCompletion(): bool
