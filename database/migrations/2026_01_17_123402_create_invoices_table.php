@@ -8,30 +8,24 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('invoices', function (Blueprint $table) {
+        Schema::create('customer_bills', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
-            $table->string('invoice_number')->unique();
-            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->foreignId('package_id')->nullable()->constrained('packages')->nullOnDelete();
+            $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
+            $table->foreignId('admin_id')->constrained('users')->cascadeOnDelete(); // Added admin_id
+            $table->foreignId('customer_id')->constrained('customers')->cascadeOnDelete(); // Renamed from user_id
             $table->decimal('amount', 10, 2);
-            $table->decimal('tax_amount', 10, 2)->default(0);
-            $table->decimal('total_amount', 10, 2);
-            $table->enum('status', ['draft', 'pending', 'paid', 'cancelled', 'overdue'])->default('pending');
-            $table->date('billing_period_start')->nullable();
-            $table->date('billing_period_end')->nullable();
+            $table->string('status')->default('unpaid');
+            $table->date('bill_date'); // Renamed from billing_period_start
             $table->date('due_date')->nullable();
-            $table->timestamp('paid_at')->nullable();
-            $table->text('notes')->nullable();
             $table->timestamps();
 
-            $table->index(['tenant_id', 'user_id', 'status']);
+            $table->index(['tenant_id', 'customer_id', 'status']);
             $table->index('due_date');
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('invoices');
+        Schema::dropIfExists('customer_bills');
     }
 };

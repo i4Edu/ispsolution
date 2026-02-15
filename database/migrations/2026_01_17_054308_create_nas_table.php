@@ -13,22 +13,22 @@ return new class extends Migration
     {
         Schema::create('nas', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->nullable()->constrained()->onDelete('cascade');
-            $table->string('name', 100);
-            $table->string('nas_name', 100);
-            $table->string('short_name', 50);
-            $table->string('type', 50)->default('other');
-            $table->integer('ports')->default(0);
-            $table->string('secret', 100);
-            $table->string('server', 100);
-            $table->string('community', 100)->nullable();
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade'); // Not nullable as per doc's general rule
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Adding admin_id
+            $table->string('nasname'); // Renamed from nas_name
+            $table->string('shortname'); // Renamed from short_name
+            $table->string('type')->default('mikrotik'); // Changed default
+            $table->string('secret');
+            $table->string('api_username'); // Added
+            $table->string('api_password'); // Added
+            $table->integer('api_port')->default(8728); // Added
+            $table->string('community')->default('billing'); // Changed default and made not nullable
             $table->text('description')->nullable();
-            $table->enum('status', ['active', 'inactive', 'maintenance'])->default('active');
             $table->timestamps();
 
+            $table->unique(['tenant_id', 'nasname']); // Added unique constraint for tenant_id and nasname
             $table->index('tenant_id');
-            $table->index('status');
-            $table->index('server');
+            $table->index('admin_id');
         });
     }
 

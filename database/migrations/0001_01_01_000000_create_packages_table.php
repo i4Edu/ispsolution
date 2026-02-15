@@ -12,10 +12,11 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Adding admin_id
             $table->string('name', 100);
             $table->text('description')->nullable();
-            $table->integer('bandwidth_up')->nullable(); // in kbps
-            $table->integer('bandwidth_down')->nullable(); // in kbps
+            $table->integer('upload_speed')->nullable(); // Renamed from bandwidth_up
+            $table->integer('download_speed')->nullable(); // Renamed from bandwidth_down
             $table->decimal('price', 10, 2);
             $table->string('billing_cycle')->default('monthly');
             $table->integer('validity_days')->nullable();
@@ -30,6 +31,10 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::table('packages', function (Blueprint $table) {
+            $table->dropForeign(['admin_id']);
+            $table->dropColumn('admin_id');
+        });
         Schema::dropIfExists('packages');
     }
 };

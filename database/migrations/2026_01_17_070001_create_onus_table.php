@@ -12,7 +12,8 @@ return new class extends Migration
     {
         Schema::create('onus', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->nullable()->constrained('tenants')->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade'); // Made not nullable
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Added admin_id
             $table->foreignId('olt_id')->constrained('olts')->onDelete('cascade');
             $table->string('pon_port', 50);
             $table->integer('onu_id');
@@ -32,6 +33,7 @@ return new class extends Migration
 
             $table->index('olt_id');
             $table->index('tenant_id');
+            $table->index('admin_id');
             $table->index('network_user_id');
             $table->index('serial_number');
             $table->index('status');
@@ -41,6 +43,12 @@ return new class extends Migration
 
     public function down(): void
     {
+        Schema::table('onus', function (Blueprint $table) {
+            $table->dropForeign(['admin_id']);
+            $table->dropColumn('admin_id');
+            $table->dropForeign(['tenant_id']);
+            $table->foreignId('tenant_id')->nullable()->constrained('tenants')->onDelete('cascade'); // Revert tenant_id to nullable
+        });
         Schema::dropIfExists('onus');
     }
 };

@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Added admin_id
             $table->string('code', 50);
             $table->string('name');
             $table->enum('type', ['asset', 'liability', 'equity', 'revenue', 'expense']);
@@ -37,6 +38,10 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('accounts', function (Blueprint $table) {
+            $table->dropForeign(['admin_id']);
+            $table->dropColumn('admin_id');
+        });
         Schema::dropIfExists('accounts');
     }
 };

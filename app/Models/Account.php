@@ -2,19 +2,22 @@
 
 namespace App\Models;
 
-use App\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class Account extends Model
 {
-    use BelongsToTenant, HasFactory;
+    use HasFactory;
+
+    protected $table = 'accounts';
 
     protected $fillable = [
         'tenant_id',
+        'admin_id',
         'code',
         'name',
-        'type', // asset, liability, equity, revenue, expense
+        'type',
         'sub_type',
         'description',
         'parent_account_id',
@@ -26,66 +29,35 @@ class Account extends Model
     ];
 
     protected $casts = [
-        'debit_balance' => 'decimal:2',
-        'credit_balance' => 'decimal:2',
-        'balance' => 'decimal:2',
         'is_active' => 'boolean',
         'is_system' => 'boolean',
     ];
 
-    /**
-     * Get parent account
-     */
-    public function parent()
+    protected static function booted()
+    {
+        static::creating(function ($account) {
+            $account->tenant_id = Auth::user()->tenant_id ?? 1;
+            $account->admin_id = Auth::id();
+        });
+    }
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
+
+    public function admin()
+    {
+        return $this->belongsTo(User::class, 'admin_id');
+    }
+
+    public function parentAccount()
     {
         return $this->belongsTo(Account::class, 'parent_account_id');
     }
 
-    /**
-     * Get child accounts
-     */
-    public function children()
+    public function childAccounts()
     {
         return $this->hasMany(Account::class, 'parent_account_id');
-    }
-
-    /**
-     * Get debit entries
-     */
-    public function debitEntries()
-    {
-        return $this->hasMany(GeneralLedgerEntry::class, 'debit_account_id');
-    }
-
-    /**
-     * Get credit entries
-     */
-    public function creditEntries()
-    {
-        return $this->hasMany(GeneralLedgerEntry::class, 'credit_account_id');
-    }
-
-    /**
-     * Scope by type
-     */
-    public function scopeByType($query, string $type)
-    {
-        return $query->where('type', $type);
-    }
-
-    /**
-     * Scope active accounts
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
-    }
-
-    /**
-     * Scope system accounts
-     */
-    public function scopeSystem($query)
-    {
-        return $query->where('is_system', true);
     }
 }

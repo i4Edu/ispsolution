@@ -13,12 +13,17 @@ return new class extends Migration
     {
         Schema::create('mikrotik_ip_pools', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('router_id')->constrained('mikrotik_routers')->cascadeOnDelete();
+            $table->foreignId('customer_import_request_id')->constrained('customer_import_requests')->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('nas_id')->constrained('nas')->onDelete('cascade'); // Changed from router_id to nas_id, constrained to nas
             $table->string('name')->index();
-            $table->json('ranges');
+            $table->string('ranges'); // Changed from json to string
             $table->timestamps();
 
-            $table->unique(['router_id', 'name']);
+            $table->unique(['nas_id', 'name', 'customer_import_request_id']); // Updated unique constraint
+            $table->index('tenant_id');
+            $table->index('admin_id');
         });
     }
 

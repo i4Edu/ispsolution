@@ -13,11 +13,10 @@ return new class extends Migration
     {
         Schema::create('mikrotik_ppp_secrets', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tenant_id')->constrained()->onDelete('cascade');
-            $table->foreignId('customer_import_id')->nullable()->constrained('customer_imports')->onDelete('set null');
-            $table->foreignId('operator_id')->constrained('users')->onDelete('cascade');
-            $table->foreignId('nas_id')->constrained()->onDelete('cascade');
-            $table->foreignId('router_id')->constrained('mikrotik_routers')->onDelete('cascade');
+            $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
+            $table->foreignId('customer_import_request_id')->constrained('customer_import_requests')->onDelete('cascade'); // Renamed from customer_import_id
+            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Renamed from operator_id
+            $table->foreignId('nas_id')->constrained('nas')->onDelete('cascade'); // Ensure constrained to nas table
             
             // PPP Secret fields from MikroTik router
             $table->string('name')->index();  // Username
@@ -31,10 +30,9 @@ return new class extends Migration
             
             // Indexes
             $table->index('tenant_id');
-            $table->index('router_id');
             $table->index('nas_id');
-            $table->index('customer_import_id');
-            $table->index(['name', 'router_id']);
+            $table->index('customer_import_request_id');
+            $table->index(['name', 'nas_id']);
         });
     }
 

@@ -14,16 +14,19 @@ return new class extends Migration
             $table->id();
             $table->string('username', 100)->unique();
             $table->string('password');
+            $table->string('mobile')->nullable(); // Added mobile
             $table->enum('service_type', ['pppoe', 'hotspot', 'static'])->default('pppoe');
             $table->foreignId('package_id')->nullable()->constrained('packages')->onDelete('set null');
-            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
+            $table->foreignId('billing_profile_id')->nullable()->constrained('billing_profiles')->onDelete('set null'); // Added billing_profile_id
+            $table->foreignId('admin_id')->nullable()->constrained('users')->onDelete('cascade'); // Renamed user_id to admin_id
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
+            $table->timestamp('package_expired_at')->nullable(); // Added package_expired_at
             $table->timestamps();
 
             $table->index('username');
             $table->index('service_type');
             $table->index('status');
-            $table->index('user_id');
+            $table->index('admin_id');
         });
     }
 
