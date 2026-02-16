@@ -1,4 +1,3 @@
-version: '2.2'
 
 # SECURITY NOTE: Database ports (3306, 3307) are exposed to the host for development.
 # For production deployments, remove port mappings or use docker-compose.prod.yml override
@@ -15,8 +14,7 @@ services:
     volumes:
       - ./:/var/www
       - ./storage:/var/www/storage
-    networks:
-      - ispsolution
+    network_mode: "host"
     depends_on:
       - db
       - radius-db

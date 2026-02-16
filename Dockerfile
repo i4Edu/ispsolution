@@ -1,8 +1,8 @@
 # Build stage
 FROM php:8.2-fpm-alpine AS builder
 
-# Install system dependencies
 RUN apk add --no-cache \
+    linux-headers \
     git \
     curl \
     libpng-dev \
@@ -12,17 +12,11 @@ RUN apk add --no-cache \
     zip \
     unzip \
     nodejs \
-    npm \
-    rrdtool-dev \
-    rrdtool
+    npm
 
 # Install PHP extensions
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install pdo pdo_mysql zip gd
-
-# Install RRD PHP extension
-RUN pecl install rrd \
-    && docker-php-ext-enable rrd
+    && docker-php-ext-install -j$(nproc) gd sockets pdo pdo_mysql zip
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -32,6 +26,9 @@ WORKDIR /var/www
 
 # Copy dependency files
 COPY composer.json composer.lock package.json package-lock.json ./
+
+# Update composer dependencies
+RUN composer update --no-scripts
 
 # Install dependencies
 RUN composer install --no-interaction --no-dev --prefer-dist --optimize-autoloader --no-scripts \
