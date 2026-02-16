@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('mobile')->nullable(); // Added mobile
             $table->enum('service_type', ['pppoe', 'hotspot', 'static'])->default('pppoe');
             $table->foreignId('package_id')->nullable()->constrained('packages')->onDelete('set null');
-            $table->foreignId('billing_profile_id')->nullable()->constrained('billing_profiles')->onDelete('set null'); // Added billing_profile_id
+            $table->foreignId('billing_profile_id')->nullable(); // Added billing_profile_id
             $table->foreignId('admin_id')->nullable()->constrained('users')->onDelete('cascade'); // Renamed user_id to admin_id
             $table->enum('status', ['active', 'inactive', 'suspended'])->default('active');
             $table->timestamp('package_expired_at')->nullable(); // Added package_expired_at

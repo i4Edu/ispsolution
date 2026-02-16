@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('tenant_id')->constrained()->cascadeOnDelete();
             // Note: reseller_id column name kept for backward compatibility, refers to operator_id
             $table->foreignId('reseller_id')->constrained('users')->cascadeOnDelete();
-            $table->foreignId('payment_id')->nullable()->constrained()->nullOnDelete();
-            $table->foreignId('invoice_id')->nullable()->constrained()->nullOnDelete();
+            $table->foreignId('payment_id')->nullable();
+            $table->foreignId('invoice_id')->nullable();
             $table->decimal('commission_amount', 10, 2);
             $table->decimal('commission_percentage', 5, 2);
             $table->enum('status', ['pending', 'paid', 'cancelled'])->default('pending');

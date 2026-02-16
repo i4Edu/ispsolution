@@ -12,7 +12,7 @@ return new class extends Migration
     {
         Schema::create('packages', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('admin_id')->constrained('users')->onDelete('cascade'); // Adding admin_id
+            $table->foreignId('admin_id'); // Adding admin_id
             $table->string('name', 100);
             $table->text('description')->nullable();
             $table->integer('upload_speed')->nullable(); // Renamed from bandwidth_up

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('mikrotik_profiles', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('customer_import_request_id')->constrained('customer_import_requests')->onDelete('cascade');
+            $table->foreignId('customer_import_request_id');
             $table->foreignId('tenant_id')->constrained('tenants')->onDelete('cascade');
             $table->foreignId('admin_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('nas_id')->constrained('nas')->onDelete('cascade'); // Changed from router_id to nas_id, constrained to nas

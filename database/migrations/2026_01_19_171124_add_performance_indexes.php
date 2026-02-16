@@ -31,7 +31,7 @@ return new class extends Migration
         });
 
         // Invoices table indexes
-        Schema::table('invoices', function (Blueprint $table) {
+        /* Schema::table('invoices', function (Blueprint $table) {
             $table->index('tenant_id', 'idx_invoices_tenant_id');
             $table->index('user_id', 'idx_invoices_user_id');
             $table->index('status', 'idx_invoices_status');
@@ -40,10 +40,10 @@ return new class extends Migration
             $table->index(['tenant_id', 'status'], 'idx_invoices_tenant_status');
             $table->index(['tenant_id', 'user_id'], 'idx_invoices_tenant_user');
             $table->index(['status', 'due_date'], 'idx_invoices_status_due');
-        });
+        }); */
 
         // Payments table indexes
-        Schema::table('payments', function (Blueprint $table) {
+        /* Schema::table('payments', function (Blueprint $table) {
             $table->index('tenant_id', 'idx_payments_tenant_id');
             $table->index('user_id', 'idx_payments_user_id');
             $table->index('invoice_id', 'idx_payments_invoice_id');
@@ -52,7 +52,7 @@ return new class extends Migration
             $table->index('paid_at', 'idx_payments_paid_at');
             $table->index(['tenant_id', 'status'], 'idx_payments_tenant_status');
             $table->index(['invoice_id', 'status'], 'idx_payments_invoice_status');
-        });
+        }); */
 
         // Packages table indexes
         Schema::table('packages', function (Blueprint $table) {
@@ -118,7 +118,7 @@ return new class extends Migration
         });
 
         // Invoices table indexes
-        Schema::table('invoices', function (Blueprint $table) {
+        /* Schema::table('invoices', function (Blueprint $table) {
             $table->dropIndex('idx_invoices_tenant_id');
             $table->dropIndex('idx_invoices_user_id');
             $table->dropIndex('idx_invoices_status');
@@ -127,10 +127,10 @@ return new class extends Migration
             $table->dropIndex('idx_invoices_tenant_status');
             $table->dropIndex('idx_invoices_tenant_user');
             $table->dropIndex('idx_invoices_status_due');
-        });
+        }); */
 
         // Payments table indexes
-        Schema::table('payments', function (Blueprint $table) {
+        /* Schema::table('payments', function (Blueprint $table) {
             $table->dropIndex('idx_payments_tenant_id');
             $table->dropIndex('idx_payments_user_id');
             $table->dropIndex('idx_payments_invoice_id');
@@ -139,7 +139,7 @@ return new class extends Migration
             $table->dropIndex('idx_payments_paid_at');
             $table->dropIndex('idx_payments_tenant_status');
             $table->dropIndex('idx_payments_invoice_status');
-        });
+        }); */
 
         // Packages table indexes
         Schema::table('packages', function (Blueprint $table) {
