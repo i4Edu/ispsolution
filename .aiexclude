@@ -10,7 +10,7 @@ bootstrap/cache/
 .phpunit.cache/
 
 # --- Environment & Logs ---
-.env
+#.env
 *.log
 .git/
 
