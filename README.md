@@ -1,53 +1,110 @@
-# ISP Solution
+# ISP Solution — Network Services Management Platform
 
-Simple, accurate summary and corrected links for the ISP Solution repository.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-## About
+**ISP Solution** is a comprehensive, extensible platform for managing ISP services, designed around modern Laravel architecture, FreeRADIUS integration, and MikroTik RouterOS API. This project is actively developed under a service-oriented paradigm, documented, and aligned with multi-tenancy and strict network reliability standards.
 
-ISP Solution is an open-source Internet Service Provider management platform. It provides modular components for billing, IPAM (IP Address Management), RADIUS integration, and MikroTik Router management. This README has been simplified — full documentation remains in the docs/ directory.
+---
 
-## Quick links
+## 🚀 Features at a Glance
 
-- Documentation: DOCUMENTATION_INDEX.md
-- Installation guide: INSTALLATION.md
-- Contributing: CONTRIBUTING.md
-- Changelog: CHANGELOG.md
+- **Framework:** Laravel (PHP)
+- **Authentication:** FreeRADIUS for AAA (Authentication, Authorization, Accounting)
+- **Network Integration:** MikroTik routers via RouterOS API
+- **Database Architecture:** Dual MySQL databases (one for the app, one for FreeRADIUS)
+- **Multi-Tenancy:** Supports strict tenant isolation and role-based permissions
+- **Modular Service Layer:** All core logic is in `app/Services`, following clean architecture
+- **Extensive Documentation:** Contribution and architecture guides are maintained
 
-## Quick start (recommended: read INSTALLATION.md)
+## ⚡ Quick Start
 
-1. Clone the repository
+_Review `INSTALLATION.md` and the **Gemini Development Guide** before proceeding._
+
+### 1. Automated Setup (Recommended)
+
+```bash
+# Download and run the installation script
+wget https://raw.githubusercontent.com/i4edubd/ispsolution/main/install.sh
+chmod +x install.sh
+sudo bash install.sh
+```
+- Installs PHP, MySQL, Redis, Nginx, FreeRADIUS, and all dependencies.
+- For full developer install options, see [INSTALLATION.md](INSTALLATION.md).
+
+### 2. Docker Compose
 
 ```bash
 git clone https://github.com/i4Edu/ispsolution.git
 cd ispsolution
-```
-
-2. If using Docker (recommended for development):
-
-```bash
 cp .env.example .env
-make up
-make install
-# In the app container:
-# docker-compose exec app php artisan key:generate
-# make migrate
+make up              # Starts all containers
+make install         # Installs dependencies
+make migrate         # Sets up application database
 ```
+_Note: Demo data and environment details are in `.env.example`._
 
-3. For detailed or manual installation steps, follow INSTALLATION.md.
+---
 
-## Notes & fixes applied
+## 🏗️ Core Architecture
 
-- Removed outdated claims and milestone counters from this file.
-- Replaced external raw URLs that pointed to a different GitHub owner with the repository clone link above.
-- This README is intentionally concise; full technical documentation and installation steps remain in the docs/ and INSTALLATION.md files.
+- **Base:** Laravel 12+, PHP 8.3+
+- **App DB:** MySQL 8.x
+- **RADIUS DB:** Separate MySQL 8.x for FreeRADIUS integration
+- **MikroTik API:** Managed through `app/Services/MikroTikService.php`
+- **Service Contracts:** All business logic in `app/Services`, with interfaces in `app/Contracts/`
+- **Testing:** Tests required for all business logic; see [docs/TESTING.md](docs/TESTING.md)
+- **Multi-Tenancy:** Data-per-tenant, permissions and isolation enforced at the service layer
+- **Development guide:** See [Mikrotik_Radius_architecture.md](Mikrotik_Radius_architecture.md)  for system overview
 
-## Contributing
+---
 
-See CONTRIBUTING.md for contribution guidelines and code standards.
+## 📚 Development Guide
 
-## License
+**ALL contributors must:**
+- Review the architecture in [Mikrotik_Radius_architecture.md](Mikrotik_Radius_architecture.md) 
+- Follow open tasks in `TODO.md`
+- Implement all business logic as services under `app/Services`
+- Adhere to PSR-12 coding standard and existing code conventions
+- Write tests for new logic or bugfixes
 
-This project is licensed under the MIT License. See LICENSE for details.
+Additional documentation:
+- [CONTRIBUTING.md](CONTRIBUTING.md)
+- [LOCALIZATION_GUIDE.md](LOCALIZATION_GUIDE.md)
+- [ROLE_SYSTEM.md](docs/technical/ROLE_SYSTEM.md)
 
+---
 
-(Updated via automated repository edit by lupael-cloud request.)
+## 🔒 Multi-Tenancy & Roles
+
+- 12-level role system
+- Data isolation: enforced at service and DB query level
+- Permission system: see `ROLE_SYSTEM.md`
+- Demo account seeds: see `DemoSeeder` and `.env.example`
+
+---
+
+## ℹ️ Support & Issues
+
+- Documentation Index: [DOCUMENTATION_INDEX.md](DOCUMENTATION_INDEX.md)
+- For bugs or feature requests: use [GitHub Issues](https://github.com/i4Edu/ispsolution/issues)
+- Installation and configuration help: see [INSTALLATION.md](INSTALLATION.md) and [docs/NETWORK_SERVICES.md](docs/NETWORK_SERVICES.md)
+
+---
+
+## 💡 Project Status
+
+- This repository is **in active development.**
+- Claims regarding "feature completeness" or production rollout should be verified against `FEATURE_IMPLEMENTATION_STATUS.md`, the current commit, and open issues.
+- If you find incorrect claims or missing features, please open an issue or PR.
+
+---
+
+## 📝 License
+
+MIT License — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+  Built with ❤️ by the i4Edu ISP Solution Team
+</div>
