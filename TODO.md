@@ -1,5 +1,5 @@
 # 🏗️ Decommissioning & Migration Checklist
-*Review `Mikrotik_Radius_architecture.md`*
+*Review `Mikrotik_Radius_architecture.md` and `DEPRECATING_NETWORK_USERS_MIGRATION_GUIDE.md`*
 *(All migrations must include `tenant_id`, `admin_id` `and operator_id` fields.)*
 
 ---
@@ -20,7 +20,7 @@
 
 ---
 
-## 3. Implementation (Edit existing or generate new according to `Mikrotik_Radius_architecture.md`)
+## 3. Implementation (Edit existing or generate new according to examples from `Mikrotik_Radius_architecture.md`)
 - [ ]  Deploy/Edit existing controllers (`RouterConfigurationController.php`, `RadreplyController.php`).  
 - [ ]  Add new/Edit existing database schemas (`users`,`customers`, `billing_profiles `, `customer_bills`, `customer_payments`, `customer_change_logs`, `payment_methods`, `sms_gateways`, `sms_logs`,`nas`,`olt`,`onu`, `packages`, `ipv4_pools`, `pppoe_profiles`,`accounts`,`invoices`,`cash_ins`,`cash_outs`,`activity_logs`,`device_monitors`,`mikrotik_ip_pools`,`mikrotik_ppp_ackages`,`pppoe_profiles`).
 - [ ]  Configure routers with new RADIUS settings, firewall rules, and SNMP monitoring.  
@@ -30,16 +30,21 @@
 
 ---
 
-## 4. Migration 
-- [ ]  Migrate **network** definitions (`routers`, `ipv4_pools`, `pppoe_profiles`).  
-- [ ]  Migrate **packages** (`packages`, `billing_profiles`).  
-- [ ]  Migrate **NAS entries** (`nas`).  
-- [ ]  Migrate **OLT/ONU entries** (ensure `tenant_id` + `operator_id`).  
-- [ ]  Migrate **MAC/IP bindings** (Hotspot + PPPoE).  
+## 4. Generate Migration 
+- [ ]  Migrate **Roles** (`developers`,`super_admin`,`admin`,`operator`,`sub-operator`,`stuff`).
 - [ ]  Migrate **customers** (`all_customers`, `customer_change_logs`).  
+- [ ]  Migrate **packages** (`packages`, `billing_profiles`).
+- [ ]  Migrate **Payment Gateways** .
+- [ ]  Migrate **SMS Gateways** .
+- [ ]  Migrate **Invoices** .  
+- [ ]  Migrate **NAS entries** (`nas`).  
+- [ ]  Migrate **OLT/ONU entries** .  
+- [ ]  Migrate **MAC/IP bindings** (Hotspot + PPPoE).  
+- [ ]  Migrate **network** definitions (`routers`, `ipv4_pools`, `pppoe_profiles`).  
 - [ ]  Migrate **IP pools** (`mikrotik_ip_pools`). (Note: Use `php artisan migrate:mikrotik_resources` command)  
 - [ ]  Migrate **PPP profiles** (`mikrotik_ppp_profiles`). (Note: Use `php artisan migrate:mikrotik_resources` command)  
-- [ ]  Migrate **prepaid cards** (`customer_payments`, recharge card tables).  
+- [ ]  Migrate **prepaid cards** (`customer_payments`, recharge card tables).
+- [ ]  Migrate **Logs** .  
 
 ---
 
@@ -50,7 +55,7 @@
 - [ ]  Confirm quota enforcement and duplicate session handling scripts (`ppp aaa`, `ppp profile on-up`).  
 - [ ]  Validate scheduled tasks (`pull:radaccts`, `delete:rad_stale_sessions`) run correctly.  
 - [ ]  Perform security checks (Laravel policies, Sanctum tokens, HTTPS, CSRF).  
-- [ ]  Test OLT/ONU sync manually until automated function is restored.  
+- [ ]  Test OLT/ONU .  
 
 ---
 
