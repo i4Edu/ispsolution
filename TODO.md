@@ -1,73 +1,61 @@
-# ISP Solution Refactor Todo List
-
-This file tracks the progress of the ISP Solution refactoring, based on the architecture and requirements outlined in `1. Mikrotik_Radius_architecture .md`.
-
-## 1. Authentication & AAA
-- [ ] Implement FreeRADIUS integration for customer authentication and authorization as per mentioned at 1. Mikrotik_Radius_architecture .md.
-- [ ] Validate **FreeRADIUS** integration for PPPoE and Hotspot.
-- [x] Implement **WebAuthn** for passwordless login.
-- [x] Enforce MAC binding and duplicate session prevention.
-- [x] Test router → RADIUS → Laravel flow for PPPoE and Hotspot.
+# 🏗️ Decommissioning & Migration Checklist
+*Review `Mikrotik_Radius_architecture.md`*
+*(All migrations must include `tenant_id`, `admin_id` `and operator_id` fields.)*
 
 ---
 
-## 2. Billing & Payments
-- [x] Implement daily vs monthly billing cycles.
-- [x] Ensure prepaid/postpaid logic consistency.
-- [x] Validate commission splits across reseller hierarchy.
-- [x] Add SQL constraints to prevent duplicate bills/payments.
-- [x] Test invoice generation (PDF/Excel).
-- [x] **Monthly Billing Customers**: Auto-generate bills on the 1st of each month.
-- [x] **Network Access Termination**: Ensure service is cut off immediately upon package expiry.
+## 1. Preparation
+- [ ]  Review `Mikrotik_Radius_architecture.md` for controllers, models, and routes.  
+- [x]  Confirm new Blade/Views integration is complete.  
+- [x]  Notify stakeholders and schedule migration window.  
 
 ---
 
-## 3. SMS Gateway Providers Integration
-- [x] Integrate and test each provider.
-- [x] Standardize API wrapper for SMS sending.
-- [x] Add fallback mechanism if one provider fails.
-- [x] Log all SMS transactions for audit.
-- [x] **Customer Notifications**: Send SMS before account expiry.
+## 2. Decommissioning (Stop/Archive/Remove)
+- [x]  Backup legacy DB tables (`radcheck`, `radreply`, `radacct`, `nas`).  
+- [x]  Archive configs (`resources/freeradius3x/radiusd.conf`, router secrets, firewall rules).  
+- [x]  Stop FreeRADIUS service (`systemctl stop freeradius`).  
+- [x]  Disable cron jobs (`sync:online_customers`, `rad:sql_relay_v2p`, `restart:freeradius`).  
+- [x]  Remove legacy router configs (PPPoE/Hotspot profiles, suspended pools).   
 
 ---
 
-## 4. Payment Gateway Integration
-- [ ] **Local Gateways**:
-  - [ ] bKash (Checkout, Tokenized Checkout, Standard Payment)
-  - [ ] Nagad Mobile Financial Service
-  - [ ] Rocket Mobile Financial Service
-  - [ ] SSLCommerz Aggregator
-  - [ ] aamarPay Aggregator
-  - [ ] shurjoPay Aggregator
-- [ ] **International/Regional Gateways**:
-  - [ ] Razorpay
-  - [ ] EasyPayWay Aggregator
-  - [ ] Walletmix Aggregator
-  - [ ] BD Smart Pay Aggregator Service
-- [ ] **Manual/Other**:
-  - [ ] Recharge Card
-  - [ ] Send Money
-- [ ] Implement unified payment interface for all gateways.
-- [ ] Add webhook handling for payment confirmation.
-- [ ] Ensure PCI-DSS compliance for sensitive data.
-- [ ] Test refunds, partial payments, and reconciliation.
-- [ ] **Customer Online Activation**: Enable service activation upon successful online payment.
-- [ ] **Reseller/Sub-reseller Balance**: Allow online balance top-up.
-- [ ] **Recharge Card Partners**: Enable online balance addition.
+## 3. Implementation (Edit existing or generate new according to `Mikrotik_Radius_architecture.md`)
+- [ ]  Deploy/Edit existing controllers (`RouterConfigurationController.php`, `RadreplyController.php`).  
+- [ ]  Add new/Edit existing database schemas (`users`,`customers`, `billing_profiles `, `customer_bills`, `customer_payments`, `customer_change_logs`, `payment_methods`, `sms_gateways`, `sms_logs`,`nas`,`olt`,`onu`, `packages`, `ipv4_pools`, `pppoe_profiles`,`accounts`,`invoices`,`cash_ins`,`cash_outs`,`activity_logs`,`device_monitors`,`mikrotik_ip_pools`,`mikrotik_ppp_ackages`,`pppoe_profiles`).
+- [ ]  Configure routers with new RADIUS settings, firewall rules, and SNMP monitoring.  
+- [ ]  Implement Laravel services (`BillingService`, `PaymentProcessingService`, `RouterManagementService`).  
+- [ ]  Set up onboarding flows (`MinimumConfigurationController.php`) for admin.  
+- [ ]  Add OLT/ONU sync module (manual sync required until automated function is restored).  
 
 ---
 
-## 5. Router & Network Integration
-- [ ] Refactor MikroTik API calls into modular services (Must follow requirment mentioned at 1. Mikrotik_Radius_architecture .md).
-- [ ] Move hardcoded IP ranges/firewall rules into config files.
-- [ ] Add error handling for router API failures.
-- [ ] Validate suspended user blocking via firewall rules.
-- [ ] Test PPPoE and Hotspot provisioning end-to-end.
+## 4. Migration 
+- [ ]  Migrate **network** definitions (`routers`, `ipv4_pools`, `pppoe_profiles`).  
+- [ ]  Migrate **packages** (`packages`, `billing_profiles`).  
+- [ ]  Migrate **NAS entries** (`nas`).  
+- [ ]  Migrate **OLT/ONU entries** (ensure `tenant_id` + `operator_id`).  
+- [ ]  Migrate **MAC/IP bindings** (Hotspot + PPPoE).  
+- [ ]  Migrate **customers** (`all_customers`, `customer_change_logs`).  
+- [ ]  Migrate **IP pools** (`mikrotik_ip_pools`). (Note: Use `php artisan migrate:mikrotik_resources` command)  
+- [ ]  Migrate **PPP profiles** (`mikrotik_ppp_profiles`). (Note: Use `php artisan migrate:mikrotik_resources` command)  
+- [ ]  Migrate **prepaid cards** (`customer_payments`, recharge card tables).  
 
 ---
 
-## 6. Database Schema & Integrity
-- [ ] Add foreign key constraints for customer–bill–payment relationships.
-- [ ] Enforce unique indexes for usernames, MAC addresses, and IPs.
-- [ ] Run migrations to clean deprecated fields.
-- [ ] Document schema with ERD diagrams.
+## 5. Testing (Validate/Verify)
+- [ ]  Run PPPoE and Hotspot authentication tests against new RADIUS (`radcheck`, `radreply`).  
+- [ ]  Verify billing cycles (daily/monthly) generate invoices (`customer_bills`).  
+- [ ]  Test role-based dashboards (Admin, Operator, Sub-operator, Customer).  
+- [ ]  Confirm quota enforcement and duplicate session handling scripts (`ppp aaa`, `ppp profile on-up`).  
+- [ ]  Validate scheduled tasks (`pull:radaccts`, `delete:rad_stale_sessions`) run correctly.  
+- [ ]  Perform security checks (Laravel policies, Sanctum tokens, HTTPS, CSRF).  
+- [ ]  Test OLT/ONU sync manually until automated function is restored.  
+
+---
+
+## 6. Post-Migration Validation
+- [ ] ❌ Monitor live sessions (`radacct`) and accounting logs for accuracy.  
+- [ ] ❌ Confirm notifications (SMS/email) trigger correctly (`NotificationService`).  
+- [ ] ❌ Audit firewall rules and router pools for suspended users.  
+- [ ] ❌ Share migration report with stakeholders.  
