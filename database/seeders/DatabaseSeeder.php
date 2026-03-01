@@ -34,6 +34,7 @@ class DatabaseSeeder extends Seeder
             VatProfileSeeder::class,
             SmsEventSeeder::class,
             ExpenseCategorySeeder::class,
+            PaymentGatewaySeeder::class,
         ]);
 
         // Create test user

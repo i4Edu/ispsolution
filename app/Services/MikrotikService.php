@@ -137,7 +137,7 @@ class MikrotikService implements MikrotikServiceInterface
 
         // 13. SNMP Configuration
         $this->api->ttyWirte('/snmp/set', ['enabled' => 'yes']);
-        $this->api.addMktRows('snmp_community', [['name' => 'billing']]);
+        $this->api->addMktRows('snmp_community', [['name' => 'billing']]);
 
         // 14. Firewall Rules for Suspended Pool
         $this->api->addMktRows('ip_firewall_filter', [
@@ -154,5 +154,20 @@ class MikrotikService implements MikrotikServiceInterface
                 'comment' => 'drop suspended pool',
             ]
         ]);
+    }
+
+    public function getPppSecrets()
+    {
+        return $this->api->getMktRows('ppp_secret');
+    }
+
+    public function getRows(string $resource)
+    {
+        return $this->api->getMktRows($resource);
+    }
+
+    public function removePppActiveById($id)
+    {
+        return $this->api->ttyWirte('/ppp/active/remove', ['numbers' => $id]);
     }
 }
