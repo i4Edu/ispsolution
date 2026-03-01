@@ -1,5 +1,5 @@
 # 🏗️ Decommissioning & Migration Checklist
-*Review `Mikrotik_Radius_architecture.md` and `DEPRECATING_NETWORK_USERS_MIGRATION_GUIDE.md`*
+*Review [Mikrotik_Radius_architecture.md](Mikrotik_Radius_architecture.md)  and `DEPRECATING_NETWORK_USERS_MIGRATION_GUIDE.md`*
 *(All migrations must include `tenant_id`, `admin_id` `and operator_id` fields.)*
 
 ---
