@@ -94,6 +94,7 @@ class AppServiceProvider extends ServiceProvider
         if (class_exists(\App\Console\Commands\OltSnmpTest::class)) {
             $this->commands([
                 \App\Console\Commands\OltSnmpTest::class,
+                \App\Console\Commands\ImportPppCustomers::class,
             ]);
         }
 
@@ -113,6 +114,11 @@ class AppServiceProvider extends ServiceProvider
             // Allow admins and higher to manage customers
             // This gate is used by routes requiring customer management access
             return $user->operator_level <= 20; // Developer, Super Admin, Admin
+        });
+
+        // Gate for radius management (import/export, disconnect)
+        Gate::define('manage-radius', function ($user) {
+            return $user->operator_level <= 20; // Admin and higher
         });
     }
 

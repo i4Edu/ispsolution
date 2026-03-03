@@ -2,59 +2,19 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
     public function run(): void
     {
-        // Seed tenants first
         $this->call([
-            TenantSeeder::class,
             RoleSeeder::class,
-            CustomerRoleSeeder::class,
-            RolesAndPermissionsSeeder::class,
-            OperatorSeeder::class,
+            TenantSeeder::class,
+            AdminUserSeeder::class,
+            NasSeeder::class,
+            PackageSeeder::class,
+            BillingProfileSeeder::class,
         ]);
-
-        // Seed service packages first
-        $this->call([
-            ServicePackageSeeder::class,
-            IpPoolSeeder::class,
-            IpSubnetSeeder::class,
-        ]);
-
-        // Seed new feature data
-        $this->call([
-            VatProfileSeeder::class,
-            SmsEventSeeder::class,
-            ExpenseCategorySeeder::class,
-            PaymentGatewaySeeder::class,
-        ]);
-
-        // Create test user
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'is_active' => true,
-            'is_subscriber' => true,
-            'activated_at' => now(),
-            'service_type' => 'pppoe',
-        ]);
-
-        // Create additional test users with packages
-        User::factory(10)->create([
-            'is_active' => true,
-            'is_subscriber' => true,
-            'activated_at' => now(),
-            'service_type' => 'pppoe',
-        ]);
-
-        $this->command->info('Database seeding completed successfully!');
     }
 }

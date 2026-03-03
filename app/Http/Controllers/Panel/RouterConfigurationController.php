@@ -7,14 +7,17 @@ use Illuminate\Http\Request;
 use App\Models\MikrotikRouter;
 use App\Services\RouterMigrationService;
 use Illuminate\Http\Response;
+use App\Services\RadiusService;
 
 class RouterConfigurationController extends Controller
 {
     protected RouterMigrationService $migrationService;
+    protected RadiusService $radiusService;
 
     public function __construct(RouterMigrationService $migrationService)
     {
         $this->migrationService = $migrationService;
+        $this->radiusService = app(RadiusService::class);
     }
 
     public function index()
@@ -69,5 +72,20 @@ class RouterConfigurationController extends Controller
 
         $reachable = $this->migrationService->verifyRadiusConnectivity($router);
         return response()->json(['radius_reachable' => $reachable]);
+    }
+
+    public function disconnectUser(Request $request, $routerId)
+    {
+        $payload = $request->validate([
+            'username' => 'required|string',
+            'terminate_cause' => 'sometimes|string',
+        ]);
+
+        $username = $payload['username'];
+        $cause = $payload['terminate_cause'] ?? 'Admin-Disconnect';
+
+        $count = $this->radiusService->disconnectUser($username, $cause);
+
+        return response()->json(['disconnected_sessions' => $count]);
     }
 }

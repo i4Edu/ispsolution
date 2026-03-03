@@ -1,3 +1,8 @@
+````markdown
+> WARNING: Documentation status — OUTDATED
+>
+> This README contains information that may not reflect the current repository state. Many installation and feature claims are under active migration and/or decommissioning. See [documentation/migration-progress.md](documentation/migration-progress.md) and [documentation/implementation-plan.md](documentation/implementation-plan.md) for the current status and actionable steps.
+````markdown
 # ISP Solution — Network Services Management Platform
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)

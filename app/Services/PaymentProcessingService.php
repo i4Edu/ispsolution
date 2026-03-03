@@ -2,6 +2,23 @@
 
 namespace App\Services;
 
+class PaymentProcessingService
+{
+    /**
+     * Process a payment for an invoice.
+     * @param array $payload
+     * @return array
+     */
+    public function processPayment(array $payload): array
+    {
+        // Integrate with gateway SDKs / webhooks here.
+        return ['status' => 'queued'];
+    }
+}
+<?php
+
+namespace App\Services;
+
 use App\Models\Invoice;
 use App\Models\Payment;
 

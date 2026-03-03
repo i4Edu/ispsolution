@@ -6,17 +6,17 @@
 
 ## 1. Preparation
 - [ ]  Review `Mikrotik_Radius_architecture.md` for controllers, models, and routes.  
-- [x]  Confirm new Blade/Views integration is complete.  
+- [ ]  Confirm new Blade/Views integration is complete.  
 - [x]  Notify stakeholders and schedule migration window.  
 
 ---
 
 ## 2. Decommissioning (Stop/Archive/Remove)
 - [x]  Backup legacy DB tables (`radcheck`, `radreply`, `radacct`, `nas`).  
-- [x]  Archive configs (`resources/freeradius3x/radiusd.conf`, router secrets, firewall rules).  
+- [ ]  Archive configs (`resources/freeradius3x/radiusd.conf`, router secrets, firewall rules).  
 - [x]  Stop FreeRADIUS service (`systemctl stop freeradius`).  
 - [x]  Disable cron jobs (`sync:online_customers`, `rad:sql_relay_v2p`, `restart:freeradius`).  
-- [x]  Remove legacy router configs (PPPoE/Hotspot profiles, suspended pools).   
+- [ ]  Remove legacy router configs (PPPoE/Hotspot profiles, suspended pools).   
 
 ---
 

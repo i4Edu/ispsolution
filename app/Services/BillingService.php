@@ -2,11 +2,23 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Invoice;
 
 class BillingService
 {
+    /**
+     * Generate invoices for customers according to billing profiles.
+     * Returns the number of invoices created.
+     */
+    public function generateMonthlyInvoices(): int
+    {
+        // Placeholder: implement billing rules, tax, discounts, proration
+        // Return number of invoices generated
+        return 0;
+    }
+
     /**
      * Calculate charge for a user for a billing period.
      */
@@ -16,7 +28,7 @@ class BillingService
         if (!$package) return 0.0;
 
         // Simple calculation: package price (real implementations consider prorate, discounts, taxes)
-        return (float) ($package->price ?? 0.0);
+        return (float) ($package->monthly_price_cents ?? 0) / 100.0;
     }
 
     /**

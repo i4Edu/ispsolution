@@ -1,3 +1,17 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container">
+    <h1>Minimum Configuration</h1>
+    <p>This page guides through the minimal configuration steps required to bring the system online.</p>
+
+    <ul>
+        <li>Configure at least one NAS/router under <a href="{{ route('panel.admin.isp.index') ?? '#' }}">Routers</a></li>
+        <li>Configure payment gateway under <a href="{{ route('panel.super-admin.payment-gateway.index') ?? '#' }}">Payment Gateways</a></li>
+        <li>Import PPPoE secrets or enable RADIUS accounting</li>
+    </ul>
+</div>
+@endsection
 @extends('panels.layouts.app')
 
 @section('title', 'Onboarding Checklist')

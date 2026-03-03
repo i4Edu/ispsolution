@@ -4,6 +4,27 @@ namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+
+class MinimumConfigurationController extends Controller
+{
+    public function index()
+    {
+        if (request()->wantsJson()) {
+            return response()->json([
+                'status' => 'ok',
+                'message' => 'Minimum configuration endpoint (skeleton).'
+            ]);
+        }
+
+        return view('panel.onboarding.index');
+    }
+}
+<?php
+
+namespace App\Http\Controllers\Panel;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
 use App\Services\BillingService;
 use App\Services\RouterManagementService;
 use Illuminate\Http\Response;

@@ -377,6 +377,34 @@ class RadiusService implements RadiusServiceInterface
     }
 
     /**
+     * Disconnect active sessions for a username by marking acctstoptime and terminate cause.
+     */
+    public function disconnectUser(string $username, string $terminateCause = 'Admin-Disconnect'): int
+    {
+        try {
+            $sessions = RadAcct::where('username', $username)->whereNull('acctstoptime')->get();
+            $count = 0;
+            foreach ($sessions as $session) {
+                $session->update([
+                    'acctstoptime' => now(),
+                    'acctterminatecause' => $terminateCause,
+                    'acctsessiontime' => $session->acctsessiontime ?? 0,
+                ]);
+                $count++;
+            }
+
+            if ($count > 0) {
+                Log::info('Disconnected RADIUS sessions for user', ['username' => $username, 'count' => $count]);
+            }
+
+            return $count;
+        } catch (\Exception $e) {
+            Log::error('Failed to disconnect RADIUS user', ['username' => $username, 'error' => $e->getMessage()]);
+            return 0;
+        }
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function getUserStats(string $username): array

@@ -65,4 +65,67 @@ class RadreplyController extends Controller
         $reply->delete();
         return response()->json(['message' => 'Deleted']);
     }
+
+    /**
+     * Import radreply entries from uploaded CSV file.
+     * Expects CSV with headers: username,attribute,op,value
+     */
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv,txt',
+        ]);
+
+        $file = $request->file('file');
+        $handle = fopen($file->getRealPath(), 'r');
+        $header = null;
+        $imported = 0;
+
+        while (($row = fgetcsv($handle)) !== false) {
+            if (!$header) {
+                $header = array_map('strtolower', $row);
+                continue;
+            }
+
+            $data = array_combine($header, $row);
+            if (empty($data['username']) || empty($data['attribute'])) {
+                continue;
+            }
+
+            RadReply::create([
+                'username' => $data['username'],
+                'attribute' => $data['attribute'],
+                'op' => $data['op'] ?? '=',
+                'value' => $data['value'] ?? null,
+            ]);
+
+            $imported++;
+        }
+
+        fclose($handle);
+
+        return response()->json(['imported' => $imported]);
+    }
+
+    /**
+     * Export radreply entries as CSV download.
+     */
+    public function export()
+    {
+        $rows = RadReply::all(['username','attribute','op','value'])->toArray();
+
+        $callback = function () use ($rows) {
+            $out = fopen('php://output', 'w');
+            fputcsv($out, ['username','attribute','op','value']);
+            foreach ($rows as $row) {
+                fputcsv($out, [$row['username'],$row['attribute'],$row['op'],$row['value']]);
+            }
+            fclose($out);
+        };
+
+        return response()->stream($callback, Response::HTTP_OK, [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="radreply_export.csv"',
+        ]);
+    }
 }

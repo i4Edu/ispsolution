@@ -7,32 +7,43 @@ use App\Services\MikrotikService;
 class RouterMigrationService
 {
     protected MikrotikService $mikrotikService;
+    protected ?string $radiusHost;
 
-    public function __construct(MikrotikService $mikrotikService)
+    public function __construct(MikrotikService $mikrotikService, ?string $radiusHost = null)
     {
         $this->mikrotikService = $mikrotikService;
+        $this->radiusHost = $radiusHost ?? config('radius.host');
     }
 
     public function verifyRadiusConnectivity($router): bool
     {
-        // Basic verification: ensure router has radius server configured in app config
-        $radiusIp = config('radius.host') ?? null;
+        $radiusIp = $this->radiusHost ?? null;
         if (empty($radiusIp)) {
             return false;
         }
 
-        // Try to connect to the router API as a quick network check
         try {
-            if ($this->mikrotikService->connect($router->host, $router->api_username, $router->api_password, $router->api_port)) {
-                $this->mikrotikService->disconnect();
-                return true;
+            if (! $this->mikrotikService->connect($router->host, $router->api_username, $router->api_password, $router->api_port)) {
+                return false;
             }
+
+            // Check if router has a radius entry that matches our radius server
+            $radiusRows = $this->mikrotikService->getRows('radius');
+            $found = false;
+            foreach ($radiusRows as $row) {
+                if (! empty($row['address']) && trim($row['address']) === trim($radiusIp)) {
+                    $found = true;
+                    break;
+                }
+            }
+
+            $this->mikrotikService->disconnect();
+
+            // If radius entry exists on router, connectivity is likely okay.
+            return $found;
         } catch (\Throwable $e) {
-            // swallow - return false on any error
             return false;
         }
-
-        return false;
     }
 
     public function backupPppSecrets($router): string
@@ -61,18 +72,43 @@ class RouterMigrationService
 
     public function configureRadiusAuth($router): bool
     {
-        try {
-            if ($this->mikrotikService->connect($router->host, $router->api_username, $router->api_password, $router->api_port)) {
-                $radiusIp = config('radius.host');
-                $this->mikrotikService->configureRouter($router, $radiusIp);
-                $this->mikrotikService->disconnect();
-                return true;
-            }
-        } catch (\Throwable $e) {
+        $radiusIp = config('radius.host');
+        if (empty($radiusIp)) {
             return false;
         }
 
-        return false;
+        try {
+            if (! $this->mikrotikService->connect($router->host, $router->api_username, $router->api_password, $router->api_port)) {
+                return false;
+            }
+
+            // Backup local PPP secrets before changing configuration
+            $this->backupPppSecrets($router);
+
+            // Check existing radius entries and avoid duplicates
+            $radiusRows = $this->mikrotikService->getRows('radius');
+            $exists = false;
+            foreach ($radiusRows as $row) {
+                if (! empty($row['address']) && trim($row['address']) === trim($radiusIp)) {
+                    $exists = true;
+                    break;
+                }
+            }
+
+            if (! $exists) {
+                // Use existing configureRouter helper to add missing configuration
+                $this->mikrotikService->configureRouter($router, $radiusIp);
+            }
+
+            $this->mikrotikService->disconnect();
+            return true;
+        } catch (\Throwable $e) {
+            try {
+                $this->mikrotikService->disconnect();
+            } catch (\Throwable $_) {
+            }
+            return false;
+        }
     }
 
     public function testRadiusAuth($router, string $username): bool
@@ -144,11 +180,23 @@ class RouterMigrationService
 
     public function verifyMigration($router): array
     {
-        // Perform simple verification checks
+        $ok = $this->verifyRadiusConnectivity($router);
+        $active = 0;
+
+        try {
+            if ($this->mikrotikService->connect($router->host, $router->api_username, $router->api_password, $router->api_port)) {
+                $activeList = $this->mikrotikService->getPppActive();
+                $active = is_array($activeList) ? count($activeList) : 0;
+                $this->mikrotikService->disconnect();
+            }
+        } catch (\Throwable $e) {
+            // ignore
+        }
+
         return [
-            'success' => true,
-            'active_sessions' => 0,
-            'message' => 'Verification passed',
+            'success' => $ok,
+            'active_sessions' => $active,
+            'message' => $ok ? 'Verification passed' : 'Radius not configured on router',
         ];
     }
 }

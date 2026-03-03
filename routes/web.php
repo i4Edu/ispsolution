@@ -22,6 +22,7 @@ use App\Http\Controllers\Panel\SearchController;
 use App\Http\Controllers\Panel\StaffController;
 use App\Http\Controllers\Panel\SuperAdminController;
 use App\Http\Controllers\Panel\TicketController;
+use App\Http\Controllers\Panel\RadreplyController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -49,6 +50,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/store-credential', [WebAuthnController::class, 'storeCredential'])->name('store-credential');
         Route::post('/generate-assertion-options', [WebAuthnController::class, 'generateAssertionOptions'])->name('generate-assertion-options');
     });
+});
+
+// Radreply import/export (admin only)
+Route::middleware(['auth','role:admin'])->prefix('radreply')->name('radreply.')->group(function () {
+    Route::post('/import', [RadreplyController::class, 'import'])->name('import');
+    Route::get('/export', [RadreplyController::class, 'export'])->name('export');
+    Route::get('/import-page', function () { return view('panel.radreply.import'); })->name('import.page');
+    Route::get('/export-page', function () { return view('panel.radreply.export'); })->name('export.page');
 });
 
 
@@ -636,6 +645,7 @@ Route::prefix('panel/admin')->name('panel.admin.')->middleware(['auth', 'role:ad
         Route::post('/{routerId}/configure-ppp', [RouterConfigurationController::class, 'configurePpp'])->name('configure-ppp');
         Route::post('/{routerId}/configure-firewall', [RouterConfigurationController::class, 'configureFirewall'])->name('configure-firewall');
         Route::get('/{routerId}/radius-status', [RouterConfigurationController::class, 'radiusStatus'])->name('radius-status');
+        Route::post('/{routerId}/disconnect-user', [RouterConfigurationController::class, 'disconnectUser'])->name('disconnect-user');
     });
 
     // Router Import/Sync Routes (MikroTik DB Sync)

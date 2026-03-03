@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/workspaces/ispsolution/phpunit.xml" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.072532">
+    <testsuite name="Unit" tests="5" assertions="0" errors="5" failures="0" skipped="0" time="0.072532">
+      <testsuite name="BillingServiceTest" file="/workspaces/ispsolution/tests/Unit/BillingServiceTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.037083">
+        <testcase name="testCalculateChargeReturnsZeroWhenNoPackage" file="/workspaces/ispsolution/tests/Unit/BillingServiceTest.php" line="8" class="BillingServiceTest" classname="BillingServiceTest" assertions="0" time="0.036564">
+          <error type="TypeError">BillingServiceTest::testCalculateChargeReturnsZeroWhenNoPackage
+TypeError: App\Services\BillingService::calculateCharge(): Argument #1 ($user) must be of type App\Models\User, stdClass given, called in /workspaces/ispsolution/tests/Unit/BillingServiceTest.php on line 15
+
+/workspaces/ispsolution/app/Services/BillingService.php:25
+/workspaces/ispsolution/tests/Unit/BillingServiceTest.php:15</error>
+        </testcase>
+        <testcase name="testCalculateChargeUsesMonthlyPriceCents" file="/workspaces/ispsolution/tests/Unit/BillingServiceTest.php" line="18" class="BillingServiceTest" classname="BillingServiceTest" assertions="0" time="0.000519">
+          <error type="TypeError">BillingServiceTest::testCalculateChargeUsesMonthlyPriceCents
+TypeError: App\Services\BillingService::calculateCharge(): Argument #1 ($user) must be of type App\Models\User, stdClass given, called in /workspaces/ispsolution/tests/Unit/BillingServiceTest.php on line 28
+
+/workspaces/ispsolution/app/Services/BillingService.php:25
+/workspaces/ispsolution/tests/Unit/BillingServiceTest.php:28</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="RouterManagementServiceTest" file="/workspaces/ispsolution/tests/Unit/RouterManagementServiceTest.php" tests="1" assertions="0" errors="1" failures="0" skipped="0" time="0.020383">
+        <testcase name="testApplyRadiusConfigDelegatesToMikrotik" file="/workspaces/ispsolution/tests/Unit/RouterManagementServiceTest.php" line="8" class="RouterManagementServiceTest" classname="RouterManagementServiceTest" assertions="0" time="0.020383">
+          <error type="PHPUnit\Framework\MockObject\MethodCannotBeConfiguredException">RouterManagementServiceTest::testApplyRadiusConfigDelegatesToMikrotik
+PHPUnit\Framework\MockObject\MethodCannotBeConfiguredException: Trying to configure method "pushRadiusConfig" which cannot be configured because it does not exist, has not been specified, is final, or is static
+
+/workspaces/ispsolution/tests/Unit/RouterManagementServiceTest.php:14</error>
+        </testcase>
+      </testsuite>
+      <testsuite name="RouterMigrationServiceTest" file="/workspaces/ispsolution/tests/Unit/RouterMigrationServiceTest.php" tests="2" assertions="0" errors="2" failures="0" skipped="0" time="0.015065">
+        <testcase name="testVerifyRadiusConnectivityFindsRadiusEntry" file="/workspaces/ispsolution/tests/Unit/RouterMigrationServiceTest.php" line="8" class="RouterMigrationServiceTest" classname="RouterMigrationServiceTest" assertions="0" time="0.013943">
+          <error type="Illuminate\Contracts\Container\BindingResolutionException">RouterMigrationServiceTest::testVerifyRadiusConnectivityFindsRadiusEntry
+Illuminate\Contracts\Container\BindingResolutionException: Target class [config] does not exist.
+
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:1124
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:933
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:864
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php:138
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php:318
+/workspaces/ispsolution/tests/Unit/RouterMigrationServiceTest.php:39</error>
+        </testcase>
+        <testcase name="testVerifyMigrationReportsActiveSessions" file="/workspaces/ispsolution/tests/Unit/RouterMigrationServiceTest.php" line="45" class="RouterMigrationServiceTest" classname="RouterMigrationServiceTest" assertions="0" time="0.001123">
+          <error type="Illuminate\Contracts\Container\BindingResolutionException">RouterMigrationServiceTest::testVerifyMigrationReportsActiveSessions
+Illuminate\Contracts\Container\BindingResolutionException: Target class [config] does not exist.
+
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:1124
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:933
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Container/Container.php:864
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php:138
+/workspaces/ispsolution/vendor/laravel/framework/src/Illuminate/Foundation/helpers.php:318
+/workspaces/ispsolution/tests/Unit/RouterMigrationServiceTest.php:56</error>
+        </testcase>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
